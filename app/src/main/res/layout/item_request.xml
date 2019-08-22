@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="10dp"
+    android:layout_margin="5dp"
+    android:background="#fff">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvReqName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Arduino"
+        android:textSize="30dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"/>
+    <TextView
+        android:id="@+id/tvReqDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Siddharth Raj(18065071/civil)"
+        android:layout_marginLeft="15dp"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimaryDark"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
