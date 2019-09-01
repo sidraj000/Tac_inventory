@@ -9,9 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".requestDetails"></activity>
+        <activity android:name=".MainActivity_clubs"></activity>
+        <activity android:name=".clubConfirm" />
+        <activity android:name=".requestDetails" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity_admin" />
         <activity android:name=".SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

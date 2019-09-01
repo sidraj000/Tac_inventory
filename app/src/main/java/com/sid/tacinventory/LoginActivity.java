@@ -1,15 +1,15 @@
 package com.sid.tacinventory;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -25,17 +25,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -49,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     public  String uId;
     public ChildEventListener mChildEventListener;
     FirebaseUser currentUser;
-
+    Date currdate=Calendar.getInstance().getTime();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +75,21 @@ public class LoginActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
         if(currentUser!=null)
         {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            Date time= Calendar.getInstance().getTime();
+            Date tempdate=new Date(119,3,28);
+      Request request1=new Request("1","Arduino","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,currdate);
+        Request request2=new Request("2","Motors","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,tempdate);
+        Request request3=new Request("3","ir sensors","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,currdate);
+        FirebaseDatabase.getInstance().getReference().child("requests").child("1").setValue(request1);
+        FirebaseDatabase.getInstance().getReference().child("requests").child("2").setValue(request2);
+        FirebaseDatabase.getInstance().getReference().child("requests").child("3").setValue(request3);
+
+
+            if(currentUser.getEmail().equals("siddharthraj000@gmail.com"))
+            startActivity(new Intent(LoginActivity.this, MainActivity_clubs.class));
+            else if(currentUser.getEmail().equals("adityarai.civ18@itbhu.ac.in"))
+                startActivity(new Intent(LoginActivity.this,MainActivity_admin.class));
+
         }
         else
         {
@@ -158,13 +166,50 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUI(final FirebaseUser user) {
         if(user!=null) {
             writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            if(currentUser.getEmail().equals("siddharthraj000@gmail.com"))
+                startActivity(new Intent(LoginActivity.this, MainActivity_clubs.class));
+            else if(currentUser.getEmail().equals("adityarai.civ18@itbhu.ac.in"))
+                startActivity(new Intent(LoginActivity.this,MainActivity_admin.class));
+            else
+            {
+                Toast.makeText(this, "Authentication Failed...", Toast.LENGTH_SHORT).show();
+                FirebaseAuth.getInstance().signOut();
+                mGoogleSignInClient.signOut();
+            }
+
         }
     }
     private void writeNewUser(String userId, String name, String email,String pid) {
         User user=new User(name,userId,email,pid);
         DatabaseReference ref=FirebaseDatabase.getInstance().getReference();
         ref.child("users").child(userId).setValue(user);
+    }
+    @Override
+    public void onBackPressed() {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+            builder.setMessage("Confirm to Exit");
+            builder.setCancelable(true);
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.setPositiveButton("Close!", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+
+
     }
 
 

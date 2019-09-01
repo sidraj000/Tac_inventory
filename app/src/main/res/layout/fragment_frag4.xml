@@ -3,13 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".frag_admin">
+    tools:context=".frag_clubs">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/requestRecycler"
+        android:id="@+id/requestRecycler4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:scrollbars="vertical"
         tools:listitem="@layout/item_request"/>
+
+
 </FrameLayout>

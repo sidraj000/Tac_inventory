@@ -28,12 +28,13 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class frg1 extends Fragment {
+public class frag_clubs extends Fragment {
+
+    int verCode=1;
     public RecyclerView mRecycler;
     LinearLayoutManager mManager;
     public requestAdapter mAdapter;
-
-    public frg1() {
+    public frag_clubs() {
         // Required empty public constructor
     }
 
@@ -42,8 +43,8 @@ public class frg1 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_frg1, container, false);
-        mRecycler=view.findViewById(R.id.requestRecycler);
+       View view=  inflater.inflate(R.layout.fragment_frag4, container, false);
+        mRecycler=view.findViewById(R.id.requestRecycler4);
         mManager=new LinearLayoutManager(getContext());
         mRecycler.setLayoutManager(mManager);
         return view;
@@ -58,12 +59,13 @@ public class frg1 extends Fragment {
     }
 
     public static class requestViewHolder extends RecyclerView.ViewHolder{
-        TextView tvReq,tvName;
+        TextView tvReq,tvName,tvStatus;
 
         public requestViewHolder(@NonNull View itemView) {
             super(itemView);
             tvReq=itemView.findViewById(R.id.tvReqName);
             tvName=itemView.findViewById(R.id.tvReqDetails);
+            tvStatus=itemView.findViewById(R.id.tvReqStatus);
         }
     }
     public class requestAdapter extends RecyclerView.Adapter<requestViewHolder>
@@ -78,9 +80,8 @@ public class frg1 extends Fragment {
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     if(dataSnapshot.exists())
                     {
-
                         Request req=dataSnapshot.getValue(Request.class);
-                        if(req.status==0) {
+                        if(req.status==verCode) {
                             mReq.add(req);
                             mIds.add(dataSnapshot.getKey());
                             notifyItemInserted(mReq.size() - 1);
@@ -98,25 +99,25 @@ public class frg1 extends Fragment {
                     // [START_EXCLUDE]
 
                     if (userIndex > -1) {
-                        // Replace with the new data
-                        if(req.status!=0)
+                        if(req.status!=verCode)
                         {
                             mReq.remove(userIndex);
                             mIds.remove(userIndex);
                             notifyItemRemoved(userIndex);
                         }
                         else {
-                            if(req.status==0) {
+                            if(req.status==verCode) {
                                 mReq.set(userIndex, req);
                                 notifyItemChanged(userIndex);
                             }
                         }
-
-                        // Update the RecyclerView
-
                     } else {
-                        mReq.add(req);
-                        notifyItemInserted(mReq.size()-1);
+                        if(req.status==verCode) {
+                            mReq.add(req);
+
+                            mIds.add(dataSnapshot.getKey());
+                            notifyItemInserted(mReq.size() - 1);
+                        }
                     }
 
 
@@ -160,14 +161,16 @@ public class frg1 extends Fragment {
         public void onBindViewHolder(@NonNull requestViewHolder holder, final int i) {
             holder.tvReq.setText(mReq.get(i).itemName);
             holder.tvName.setText(mReq.get(i).pName+"{"+mReq.get(i).rollNumber+"}");
+            holder.tvStatus.setVisibility(View.GONE);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   Intent intent=new Intent(mContext,requestDetails.class);
+                    Intent intent=new Intent(mContext,clubConfirm.class);
                     intent.putExtra("details",mReq.get(i).reqid);
-                   startActivity(intent);
+                    startActivity(intent);
                 }
             });
+
         }
 
         @Override
@@ -177,3 +180,4 @@ public class frg1 extends Fragment {
     }
 
 }
+

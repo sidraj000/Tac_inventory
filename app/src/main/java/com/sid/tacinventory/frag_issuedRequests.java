@@ -2,7 +2,6 @@ package com.sid.tacinventory;
 
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,21 +20,28 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class frag2 extends Fragment {
+public class frag_issuedRequests extends Fragment {
 
     public RecyclerView mRecycler;
     LinearLayoutManager mManager;
     public requestAdapter mAdapter;
+    Date currentdate= Calendar.getInstance().getTime();
+    String formattedDateString;
+    Date currentDate=Calendar.getInstance().getTime();
 
 
-    public frag2() {
+    public frag_issuedRequests() {
         // Required empty public constructor
     }
 
@@ -44,8 +50,8 @@ public class frag2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_frag2, container, false);
-        mRecycler=view.findViewById(R.id.requestRecycler2);
+        View view= inflater.inflate(R.layout.fragment_frag3, container, false);
+        mRecycler=view.findViewById(R.id.requestRecycler3);
         mManager=new LinearLayoutManager(getContext());
         mRecycler.setLayoutManager(mManager);
         return view;
@@ -59,13 +65,16 @@ public class frag2 extends Fragment {
 
     }
 
+
+
     public static class requestViewHolder extends RecyclerView.ViewHolder{
-        TextView tvReq,tvName;
+        TextView tvReq,tvName,tvStatus;
 
         public requestViewHolder(@NonNull View itemView) {
             super(itemView);
             tvReq=itemView.findViewById(R.id.tvReqName);
             tvName=itemView.findViewById(R.id.tvReqDetails);
+            tvStatus=itemView.findViewById(R.id.tvReqStatus);
         }
     }
     public class requestAdapter extends RecyclerView.Adapter<requestViewHolder>
@@ -75,16 +84,17 @@ public class frag2 extends Fragment {
         public List<String> mIds=new ArrayList<>();
         public requestAdapter(final Context context) {
             mContext=context;
-            FirebaseDatabase.getInstance().getReference().child("requests").addChildEventListener(new ChildEventListener() {
+            FirebaseDatabase.getInstance().getReference().child("requests").orderByChild("date/time").addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     if(dataSnapshot.exists())
                     {
                         Request req=dataSnapshot.getValue(Request.class);
-                        if(req.status==1) {
+                        if(req.status==13)
+                        {
                             mReq.add(req);
                             mIds.add(dataSnapshot.getKey());
-                            notifyItemInserted(mReq.size() - 1);
+                            notifyItemInserted(mReq.size()-1);
                         }
                     }
                 }
@@ -99,21 +109,22 @@ public class frag2 extends Fragment {
                     // [START_EXCLUDE]
 
                     if (userIndex > -1) {
-                        if(req.status!=1)
+                        if(req.status!=13)
                         {
                             mReq.remove(userIndex);
                             mIds.remove(userIndex);
                             notifyItemRemoved(userIndex);
                         }
                         else {
-                            if(req.status==1) {
+                            if(req.status==13) {
                                 mReq.set(userIndex, req);
                                 notifyItemChanged(userIndex);
                             }
                         }
                     } else {
-                        if(req.status==1) {
+                        if(req.status==13) {
                             mReq.add(req);
+                            mIds.add(dataSnapshot.getKey());
                             notifyItemInserted(mReq.size() - 1);
                         }
                     }
@@ -159,6 +170,20 @@ public class frag2 extends Fragment {
         public void onBindViewHolder(@NonNull requestViewHolder holder, final int i) {
             holder.tvReq.setText(mReq.get(i).itemName);
             holder.tvName.setText(mReq.get(i).pName+"{"+mReq.get(i).rollNumber+"}");
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            formattedDateString = formatter.format(mReq.get(i).date);
+            holder.tvStatus.setText(formattedDateString);
+            int k=mReq.get(i).date.compareTo(currentDate);
+            if(mReq.get(i).date.compareTo(currentDate)>0)
+            {
+                holder.tvStatus.setTextColor(getResources().getColor(R.color.green));
+            }
+            else
+            {
+                holder.tvStatus.setTextColor(getResources().getColor(R.color.red));
+            }
+
+
 
         }
 
