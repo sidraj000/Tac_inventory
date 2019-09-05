@@ -12,15 +12,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class requestDetails extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     TextView tvName,tvQuant,tvRoll,tvItem,tvStatus;
@@ -28,12 +32,14 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
     Spinner sp;
     String reqid;
     Integer status;
+    public SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH);
     List<String> categories = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reqid=getIntent().getStringExtra("details");
         setContentView(R.layout.activity_request_details);
+
         tvName=findViewById(R.id.tvReqDetName);
         tvRoll=findViewById(R.id.tvReqDetRoll);
         tvItem=findViewById(R.id.tvReqDetItem);
@@ -71,6 +77,8 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                     sp.setVisibility(View.VISIBLE);
                     btnDecline.setVisibility(View.VISIBLE);
                     btnAccept.setVisibility(View.VISIBLE);
+                    btnDecline.setText("Decline");
+                    btnAccept.setText("Accept");
 
                     btnAccept.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -80,6 +88,10 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                                 request.status=11;
                                 FirebaseDatabase.getInstance().getReference().child("requests").child(reqid).setValue(request);
                                 Toast.makeText(requestDetails.this, "Request Accepeted Successfully", Toast.LENGTH_SHORT).show();
+
+                                btnDecline.setVisibility(View.GONE);
+                                btnAccept.setVisibility(View.GONE);
+
                             }
                             else {
                                 request.status = status;
@@ -98,11 +110,13 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                             Toast.makeText(requestDetails.this, "Request Declined Successfully", Toast.LENGTH_SHORT).show();
                             btnAccept.setVisibility(View.GONE);
                             btnDecline.setVisibility(View.GONE);
+
                         }
                     });
                 }
                 else if(request.status==6) {
-
+                    btnAccept.setText("Accept");
+                    btnDecline.setText("Decline");
                     tvStatus.setTextColor(getResources().getColor(R.color.red));
                     tvStatus.setText("Declined by Inventory Manager");
                     sp.setVisibility(View.GONE);
@@ -113,6 +127,8 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                 else if(request.status>0&&request.status<6)
                 {
 
+                    btnAccept.setText("Accept");
+                    btnDecline.setText("Decline");
                     tvStatus.setTextColor(getResources().getColor(R.color.yellow));
                     tvStatus.setText("Processing");
                     sp.setVisibility(View.GONE);
@@ -122,6 +138,8 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                 else if(request.status==10)
                 {
 
+                    btnAccept.setText("Accept");
+                    btnDecline.setText("Decline");
                     tvStatus.setTextColor(getResources().getColor(R.color.red));
                     tvStatus.setText("Declined");
                     btnDecline.setVisibility(View.GONE);
@@ -130,6 +148,8 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
 
                 else if(request.status==12)
                 {
+                    btnAccept.setText("Accept");
+                    btnDecline.setText("Decline");
 
                     sp.setVisibility(View.GONE);
 
@@ -137,10 +157,21 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                     tvStatus.setText("Cancelled by Inventory Manager");
                     sp.setVisibility(View.GONE);
                 }
-                else if(request.status==11)
+                else if(request.status==13)
                 {
 
+                    btnAccept.setText("Accept");
+                    btnDecline.setText("Decline");
+                    tvStatus.setText("Issued");
+                    tvStatus.setTextColor(getResources().getColor(R.color.green));
+                    btnAccept.setVisibility(View.GONE);
+                    btnDecline.setVisibility(View.GONE);
+                }
+                 else if(request.status==11)
+                {
 
+                    btnAccept.setText("Issue");
+                    btnDecline.setText("Cancel");
                     tvStatus.setTextColor(getResources().getColor(R.color.green));
                     tvStatus.setText("Approved");
                     sp.setVisibility(View.GONE);
@@ -150,11 +181,18 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
                         @Override
                         public void onClick(View v) {
                             request.status =13;
-                            Date endDate=request.date ;
+                            Date endDate= null;
+                            try {
+                                endDate = inputFormatter.parse(request.date);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             Calendar cal = Calendar.getInstance();
-                            cal.setTime(endDate);
                             cal.add(Calendar.MONTH,1);
-                            request.date=cal.getTime();
+
+                            endDate=cal.getTime();
+                            //request.date=cal.getTime();
+                            request.date=inputFormatter.format(endDate);
                             FirebaseDatabase.getInstance().getReference().child("requests").child(reqid).setValue(request);
                             Toast.makeText(requestDetails.this, "Request Accepeted Successfully", Toast.LENGTH_SHORT).show();
                             btnAccept.setVisibility(View.GONE);
@@ -174,12 +212,7 @@ public class requestDetails extends AppCompatActivity implements AdapterView.OnI
 
 
                 }
-                else if(request.status==13)
-                {
 
-                    tvStatus.setText("Issued");
-                    tvStatus.setTextColor(getResources().getColor(R.color.green));
-                }
             }
 
             @Override

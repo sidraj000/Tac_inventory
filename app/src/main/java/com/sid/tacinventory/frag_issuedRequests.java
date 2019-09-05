@@ -21,11 +21,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -39,8 +42,11 @@ public class frag_issuedRequests extends Fragment {
     Date currentdate= Calendar.getInstance().getTime();
     String formattedDateString;
     Date currentDate=Calendar.getInstance().getTime();
+    public Date dd;
+    public Date da;
 
 
+    public SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH);
     public frag_issuedRequests() {
         // Required empty public constructor
     }
@@ -170,11 +176,23 @@ public class frag_issuedRequests extends Fragment {
         public void onBindViewHolder(@NonNull requestViewHolder holder, final int i) {
             holder.tvReq.setText(mReq.get(i).itemName);
             holder.tvName.setText(mReq.get(i).pName+"{"+mReq.get(i).rollNumber+"}");
+            try {
+                 da=inputFormatter.parse(mReq.get(i).date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            formattedDateString = formatter.format(mReq.get(i).date);
+            formattedDateString = formatter.format(da);
             holder.tvStatus.setText(formattedDateString);
-            int k=mReq.get(i).date.compareTo(currentDate);
-            if(mReq.get(i).date.compareTo(currentDate)>0)
+
+            try {
+                 dd=inputFormatter.parse(mReq.get(i).date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            int k=dd.compareTo(currentDate);
+            if(dd.compareTo(currentDate)>0)
             {
                 holder.tvStatus.setTextColor(getResources().getColor(R.color.green));
             }

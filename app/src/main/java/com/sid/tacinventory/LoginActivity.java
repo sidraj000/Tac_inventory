@@ -77,17 +77,17 @@ public class LoginActivity extends AppCompatActivity {
         {
             Date time= Calendar.getInstance().getTime();
             Date tempdate=new Date(119,3,28);
-      Request request1=new Request("1","Arduino","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,currdate);
+     /* Request request1=new Request("1","Arduino","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,currdate);
         Request request2=new Request("2","Motors","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,tempdate);
         Request request3=new Request("3","ir sensors","Siddharth","18065071","siddharthraj.civ18@itbhu.ac.in","project",0,1,currdate);
         FirebaseDatabase.getInstance().getReference().child("requests").child("1").setValue(request1);
         FirebaseDatabase.getInstance().getReference().child("requests").child("2").setValue(request2);
         FirebaseDatabase.getInstance().getReference().child("requests").child("3").setValue(request3);
-
+*/
 
             if(currentUser.getEmail().equals("siddharthraj000@gmail.com"))
             startActivity(new Intent(LoginActivity.this, MainActivity_clubs.class));
-            else if(currentUser.getEmail().equals("adityarai.civ18@itbhu.ac.in"))
+            else if(currentUser.getEmail().equals("mayank.bansal.eee16@itbhu.ac.in"))
                 startActivity(new Intent(LoginActivity.this,MainActivity_admin.class));
 
         }
@@ -168,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
             writeNewUser(user.getUid(), user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString());
             if(currentUser.getEmail().equals("siddharthraj000@gmail.com"))
                 startActivity(new Intent(LoginActivity.this, MainActivity_clubs.class));
-            else if(currentUser.getEmail().equals("adityarai.civ18@itbhu.ac.in"))
+            else if(currentUser.getEmail().equals("mayank.bansal.eee16@itbhu.ac.in"))
                 startActivity(new Intent(LoginActivity.this,MainActivity_admin.class));
             else
             {
